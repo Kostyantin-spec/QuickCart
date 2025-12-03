@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+
+    // Визначає мапінг псевдонімів
+    "paths": {
+      "@/*": ["./*"]
+    }, // Це означає, що `@/` посилається на кореневу теку `./`
     "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -31,7 +33,5 @@
     "**/*.ts",
     "**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
