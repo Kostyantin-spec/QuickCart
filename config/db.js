@@ -22,7 +22,7 @@ async function connectDB(){
         })
     }
 
-    cached.conn = await cached.process
+    cached.conn = await cached.promise;
     return cached.conn
 }
 
