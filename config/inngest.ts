@@ -7,15 +7,15 @@ export const inngest = new Inngest({ id: "quickcart-next" });
 
 // Inngest Function to save user data to a database
 export const syncUserCreation = inngest.createFunction(
-  { id: "sync-user-from-clerk" }, // Аргумент 1: налаштування
-  { event: "clerk/user.created" }, // Аргумент 2: тригер події
-  async ({ event }) => {           // Функція обробки тепер всередині другого аргументу
-    const { id, first_name, last_name, email_address, image_url } = event.data;
+  { id: "sync-user-from-clerk" },       // Аргумент 1: Налаштування
+  { event: "clerk/user.created" },      // Аргумент 2: Тригер
+  async ({ event }) => {                // Аргумент 3: Функція-обробник
+    const { data } = event;
     const userData = {
-      _id: id,
-      email: email_address[0].email_address,
-      name: (first_name || "") + " " + (last_name || ""),
-      imageUrl: image_url,
+      _id: data.id,
+      email: data.email_addresses[0].email_address,
+      name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
+      imageUrl: data.image_url,
     };
     await connectDB();
     await User.create(userData);
@@ -27,14 +27,14 @@ export const syncUserUpdation = inngest.createFunction(
   { id: "update-user-from-clerk" },
   { event: "clerk/user.updated" },
   async ({ event }) => {
-    const { id, first_name, last_name, email_address, image_url } = event.data;
+    const { data } = event;
     const userData = {
-      email: email_address[0].email_address,
-      name: (first_name || "") + " " + (last_name || ""),
-      imageUrl: image_url,
+      email: data.email_addresses[0].email_address,
+      name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
+      imageUrl: data.image_url,
     };
     await connectDB();
-    await User.findByIdAndUpdate(id, userData);
+    await User.findByIdAndUpdate(data.id, userData);
   }
 );
 
@@ -43,8 +43,9 @@ export const syncUserDeletion = inngest.createFunction(
   { id: "delete-user-with-clerk" },
   { event: "clerk/user.deleted" },
   async ({ event }) => {
-    const { id } = event.data;
+    const { data } = event;
     await connectDB();
-    await User.findByIdAndDelete(id); // Виправлено: було findByIdAndUpdate, а має бути findByIdAndDelete
+    // Використовуємо findByIdAndDelete для видалення, а не update
+    await User.findByIdAndDelete(data.id); 
   }
 );
