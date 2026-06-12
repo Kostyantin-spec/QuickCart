@@ -4,10 +4,10 @@ import User from "@/models/User";
 
 export const inngest = new Inngest({ id: "quickcart-next" });
 
-// Використовуємо 'any' для event.data, щоб обійти помилки типізації TypeScript
 export const syncUserCreation = inngest.createFunction(
-  { id: "sync-user-from-clerk", event: "clerk/user.created" },
-  async ({ event }: { event: any }) => { 
+  { id: "sync-user-from-clerk" }, // Аргумент 1: налаштування
+  { event: "clerk/user.created" }, // Аргумент 2: тригер (винесено окремо)
+  async ({ event }) => {           // Аргумент 3: функція
     const data = event.data;
     const userData = {
       _id: data.id,
@@ -21,8 +21,9 @@ export const syncUserCreation = inngest.createFunction(
 );
 
 export const syncUserUpdation = inngest.createFunction(
-  { id: "update-user-from-clerk", event: "clerk/user.updated" },
-  async ({ event }: { event: any }) => {
+  { id: "update-user-from-clerk" },
+  { event: "clerk/user.updated" },
+  async ({ event }) => {
     const data = event.data;
     const userData = {
       email: data.email_addresses[0].email_address,
@@ -35,8 +36,9 @@ export const syncUserUpdation = inngest.createFunction(
 );
 
 export const syncUserDeletion = inngest.createFunction(
-  { id: "delete-user-with-clerk", event: "clerk/user.deleted" },
-  async ({ event }: { event: any }) => {
+  { id: "delete-user-with-clerk" },
+  { event: "clerk/user.deleted" },
+  async ({ event }) => {
     const data = event.data;
     await connectDB();
     await User.findByIdAndDelete(data.id);
