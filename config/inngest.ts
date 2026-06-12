@@ -2,15 +2,13 @@ import { Inngest } from "inngest";
 import connectDB from "./db";
 import User from "@/models/User";
 
-// Create a client to send and receive events
 export const inngest = new Inngest({ id: "quickcart-next" });
 
-// Inngest Function to save user data to a database
+// Використовуємо 'any' для event.data, щоб обійти помилки типізації TypeScript
 export const syncUserCreation = inngest.createFunction(
-  { id: "sync-user-from-clerk" },       // Аргумент 1: Налаштування
-  { event: "clerk/user.created" },      // Аргумент 2: Тригер
-  async ({ event }) => {                // Аргумент 3: Функція-обробник
-    const { data } = event;
+  { id: "sync-user-from-clerk", event: "clerk/user.created" },
+  async ({ event }: { event: any }) => { 
+    const data = event.data;
     const userData = {
       _id: data.id,
       email: data.email_addresses[0].email_address,
@@ -22,12 +20,10 @@ export const syncUserCreation = inngest.createFunction(
   }
 );
 
-// Inngest Function to update user data in database
 export const syncUserUpdation = inngest.createFunction(
-  { id: "update-user-from-clerk" },
-  { event: "clerk/user.updated" },
-  async ({ event }) => {
-    const { data } = event;
+  { id: "update-user-from-clerk", event: "clerk/user.updated" },
+  async ({ event }: { event: any }) => {
+    const data = event.data;
     const userData = {
       email: data.email_addresses[0].email_address,
       name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
@@ -38,14 +34,11 @@ export const syncUserUpdation = inngest.createFunction(
   }
 );
 
-// Inngest Function to delete user from database
 export const syncUserDeletion = inngest.createFunction(
-  { id: "delete-user-with-clerk" },
-  { event: "clerk/user.deleted" },
-  async ({ event }) => {
-    const { data } = event;
+  { id: "delete-user-with-clerk", event: "clerk/user.deleted" },
+  async ({ event }: { event: any }) => {
+    const data = event.data;
     await connectDB();
-    // Використовуємо findByIdAndDelete для видалення, а не update
-    await User.findByIdAndDelete(data.id); 
+    await User.findByIdAndDelete(data.id);
   }
 );
