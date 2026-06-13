@@ -5,9 +5,10 @@ import User from "@/models/User";
 
 export const inngest = new Inngest({ id: "quickcart-next" });
 
+// Об'єднуємо конфігурацію та тригер в один об'єкт (перший аргумент),
+// щоб для TypeScript це виглядало як 2 аргументи.
 export const syncUserCreation = inngest.createFunction(
-  { id: "sync-user-from-clerk" },
-  { event: "clerk/user.created" },
+  { id: "sync-user-from-clerk", event: "clerk/user.created" },
   async ({ event }) => {
     const data = event.data;
     const userData = {
@@ -22,8 +23,7 @@ export const syncUserCreation = inngest.createFunction(
 );
 
 export const syncUserUpdation = inngest.createFunction(
-  { id: "update-user-from-clerk" },
-  { event: "clerk/user.updated" },
+  { id: "update-user-from-clerk", event: "clerk/user.updated" },
   async ({ event }) => {
     const data = event.data;
     const userData = {
@@ -37,8 +37,7 @@ export const syncUserUpdation = inngest.createFunction(
 );
 
 export const syncUserDeletion = inngest.createFunction(
-  { id: "delete-user-with-clerk" },
-  { event: "clerk/user.deleted" },
+  { id: "delete-user-with-clerk", event: "clerk/user.deleted" },
   async ({ event }) => {
     const data = event.data;
     await connectDB();
