@@ -27,13 +27,11 @@
   },
   "include": [
     "next-env.d.ts",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts",
     "**/*.ts",
     "**/*.tsx"
-, "config/inngest.js", "app/api/inngest/route.js"  ],
-  "exclude": ["node_modules",
+  ],  
+  "exclude": [
+    "node_modules",
   "config/inngest.js"
 ]
 }
