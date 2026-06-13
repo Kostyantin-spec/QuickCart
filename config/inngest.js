@@ -1,10 +1,9 @@
 import { Inngest } from "inngest";
 import connectDB from "./db";
-import User from "../models/User"; // переконайтесь, що шлях правильний
+import User from "../models/User"; 
 
 export const inngest = new Inngest({ id: "quickcart-next" });
 
-// Функції тепер на чистих JS, тому TypeScript не буде їх чіпати
 export const syncUserCreation = inngest.createFunction(
   { id: "sync-user-from-clerk" },
   { event: "clerk/user.created" },
@@ -12,7 +11,7 @@ export const syncUserCreation = inngest.createFunction(
     const { data } = event;
     const userData = {
       _id: data.id,
-      email: data.email_addresses[0].email_address,
+      email: data.email_addresses?.[0]?.email_address || "",
       name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
       imageUrl: data.image_url,
     };
@@ -27,7 +26,7 @@ export const syncUserUpdation = inngest.createFunction(
   async ({ event }) => {
     const { data } = event;
     const userData = {
-      email: data.email_addresses[0].email_address,
+      email: data.email_addresses?.[0]?.email_address || "",
       name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
       imageUrl: data.image_url,
     };
